@@ -1,3 +1,4 @@
+
 name: Daily AI Path Articles
 
 on:
@@ -18,21 +19,26 @@ jobs:
     steps:
       - name: Get website files
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Generate separate Bengali and English articles
+
+      - name: Generate Bengali and English articles
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
         run: python scripts/auto_publish.py
-      - name: Fetch daily news and sports RSS
+
+      - name: Update news and sports feeds
         run: python scripts/update_feeds.py
+
       - name: Publish articles and updates
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add articles.json articles/ updates.json
-          git commit -m "Publish daily bilingual articles" || exit 0
+          git diff --cached --quiet || git commit -m "Publish daily bilingual articles"
           git push
+
