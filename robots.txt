@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://abdurrahaman896775-spec.github.io/sitemap.xml
+Sitemap: https://abdurrahaman896775-spec.github.io/ai-path-bangla/sitemap.xml
