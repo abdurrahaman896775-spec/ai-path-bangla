@@ -118,10 +118,26 @@ Return ONLY valid JSON in this exact format:
                 text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text)
                 result = json.loads(text)
 
-                if not result.get("title") or not result.get("paragraphs"):
+                paragraphs = result.get("paragraphs")
+                if not result.get("title") or not isinstance(paragraphs, list):
                     raise ValueError("Generated article is incomplete")
 
-                print("AI model succeeded:", model)
+                paragraphs = [
+                    str(x).strip() for x in paragraphs
+                    if isinstance(x, str) and x.strip()
+                ]
+                word_count = len(" ".join(paragraphs).split())
+
+                if len(paragraphs) < 6 or word_count < 450:
+                    raise ValueError(
+                        f"Article too short: {word_count} words, "
+                        f"{len(paragraphs)} paragraphs"
+                    )
+
+                result["paragraphs"] = paragraphs
+                print("AI model succeeded:", model,
+                      "| words:", word_count,
+                      "| paragraphs:", len(paragraphs))
                 return result
 
             except urllib.error.HTTPError as e:
